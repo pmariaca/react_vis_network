@@ -1,0 +1,111 @@
+:root {
+  --color-edit: rgb(31, 233, 13, 0.02);
+  --box-shadow-edit: 2px 5px 0.5rem rgba(0, 0, 0, 0.5);
+  --border-item-edit: 1px solid rgba(211, 211, 211, 0.3);
+  /* --box-shadow-edit: 8px 4px 4px rgba(0, 0, 0, 0.3); */
+}
+
+.the-vis-container {
+  width: 650px;
+  height: 600px;
+  border: 1px solid lightgray;
+  /* background: rgba(31, 233, 13, 0.02); */
+}
+
+.the-vis-container-edit {
+  width: 650px;
+  height: 600px;
+  border: 1px solid lightgray;
+  background: var(--color-edit);
+  box-shadow: var(--box-shadow-edit);
+}
+
+.the-vis-container-edit-node {
+  width: 120px;
+  height: 120px;
+  border: var(--border-item-edit);
+  background: var(--color-edit);
+  /* box-shadow: var(--box-shadow-edit); */
+}
+
+.the-vis-container-edit-edge {
+  width: 300px;
+  height: 200px;
+  border: var(--border-item-edit);
+  background: var(--color-edit);
+  /* box-shadow: var(--box-shadow-edit); */
+}
+/* ---------------------------- */
+
+.the-vis-container-table-edit td {
+  border: none;
+  vertical-align: top;
+}
+/* ============ colorful picker ====================== */
+
+.picker {
+  width: 200px;
+  background: #f0f0f4;
+  border-radius: 9px;
+}
+
+.picker__select {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  background: #AEA;
+  box-shadow: var(--box-shadow-edit);
+
+  border-radius: 80%;
+  border-style: outset;
+  border-width: 2px;
+}
+
+.picker__select_x {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 80%;
+  /* border-style: outset; */
+  border-style: dotted;
+  border-width: 3px;
+  /* border: 4px outset #E9E132; */
+}
+
+.picker input {
+  display: block;
+  box-sizing: border-box;
+  width: 120px;
+  margin: 10px 25px 0;
+  padding: 2px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #eee;
+  outline: none;
+  font: inherit;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.picker .react-colorful {
+  width: auto;
+}
+
+.picker__swatches {
+  display: flex;
+  padding: 4px;
+  flex-wrap: wrap;
+}
+
+.picker__swatch {
+  width: 24px;
+  height: 24px;
+  margin: 4px;
+  border: none;
+  padding: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* ================================== */
