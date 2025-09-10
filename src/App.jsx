@@ -14,15 +14,13 @@ function App() {
 
       <Stack direction="column" >
         <Box sx={{ p: 3 }}>
-          <VisNProvider >
-            <VisEdita />
-          </VisNProvider>
+          <VisEdita />
         </Box>
-        <VisNProvider >
+        {/* <VisNProvider >
           <Box sx={{ p: 3 }}>
             <VisNet />
           </Box>
-        </VisNProvider>
+        </VisNProvider> */}
       </Stack>
 
     </>

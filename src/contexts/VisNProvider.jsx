@@ -52,10 +52,12 @@ const VisNProvider = ({ children }) => {
     color: {
       color: '#848484',
       highlight: '#848484',
-      hover:  '#848484',
-      opacity: 1.0, 
+      hover: '#848484',
+      opacity: 1.0,
     },
-
+    width: 1,//30
+    dashes: false,
+    font: { color: '#343434', size: parseInt('12'), background: undefined },// hay mas, size max 100
   });
 
   return (

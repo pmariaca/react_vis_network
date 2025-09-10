@@ -9,7 +9,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-
+import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 
@@ -41,34 +41,48 @@ export default function VisNodeForm({ nodeConfig }) {
   }
   return (
     <div>
+
       <Stack direction="row-inverse">
+        <Box  >
+          <VisNodeView
+            data={data_nodes}
+            networkviewRef={networkviewRef}
+            nodeConfig={nodeConfig}
+            nodeCosas={nodeCosas}
+          />
+        </Box>
+        <Box sx={{ margin: '15px' }}>
+          <SelectShapes
+            theNodes={data_nodes.theNodes}
+            nodeShape={nodeShape}
+            setNodeShape={setNodeShape}
+          />
+          <Box sx={{ marginTop: '15px' }}>
+            <SelectBackground
+              background={background}
+              setBackground={setBackground}
+            />
+          </Box>
+        </Box>
 
-        <VisNodeView
-          data={data_nodes}
-          networkviewRef={networkviewRef}
-          nodeConfig={nodeConfig}
-          nodeCosas={nodeCosas}
-        />
+        <Stack direction="column" sx={{ margin: '15px' }}>
 
-        <SelectShapes
-          theNodes={data_nodes.theNodes}
-          nodeShape={nodeShape}
-          setNodeShape={setNodeShape}
+          <SelectBorder
+            borderWidth={borderWidth}
+            setBorderWidth={setBorderWidth}
+            border={border}
+            setBorder={setBorder}
+          />
 
-          background={background}
-          setBackground={setBackground}
-          borderWidth={borderWidth}
-          setBorderWidth={setBorderWidth}
-          border={border}
-          setBorder={setBorder}
-        />
+          <SelectFont
+            fontColor={fontColor}
+            setFontColor={setFontColor}
+            fontSize={fontSize}
+            setFontSize={setFontSize}
+          />
+        </Stack>
       </Stack>
-      <SelectFont
-        fontColor={fontColor}
-        setFontColor={setFontColor}
-        fontSize={fontSize}
-        setFontSize={setFontSize}
-      />
+
     </div>
   )
 }
@@ -77,110 +91,108 @@ function SelectFont({ fontColor, setFontColor, fontSize, setFontSize,
 }) {
   return (
     <>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <Colorful
-                color={fontColor}
-                setColor={setFontColor} />
-              <Box sx={{ width: 300 }}>
-                <Slider
-                  aria-label="font-size"
-                  valueLabelDisplay="auto"
-                  min={0}
-                  max={30}
-                  value={fontSize}
-                  onChange={(e) => setFontSize(e.target.value)}
-                />
-              </Box>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <Box sx={{ width: 200 }}>
+        <Typography><span style={{ fontSize: '32px' }}>&#9997;</span></Typography>
+        <Colorful
+          color={fontColor}
+          setColor={setFontColor} />
+
+        <Slider
+          aria-label="font-size"
+          valueLabelDisplay="auto"
+          min={0}
+          max={45}
+          value={fontSize}
+          onChange={(e) => setFontSize(e.target.value)}
+        />
+      </Box>
     </>
   )
 }
-
-function SelectShapes({ theNodes, nodeShape, setNodeShape,
-  background, setBackground,
-  borderWidth, setBorderWidth, border, setBorder
-}) {
-
-  // function handleChange(e) {
-  //   const dataTemp = nodeShape.map(item => {
-  //     item.shape = e.target.value
-  //     return item;
-  //   });
-  //   setNodeShape(dataTemp)
-  // }
-
+function SelectBackground({ background, setBackground }) {
   return (
-    <div className='the-vis-container-table-edit'>
-      <table >
-        <tbody>
-          <tr>
-            <td >
-              <Box >
-                <FormControl sx={{ width: 120 }}
-                //   fullWidth sx={{   width: 200,   height: 120,  }}
-                >
-                  <InputLabel id="select-nodo-tipo">tipo</InputLabel>
-                  <Select
-                    labelId="select-nodo-tipo"
-                    value={nodeShape}
-                    label="nodeShape"
-                    size="4"
-                    onChange={e => setNodeShape(e.target.value)}
-                  >
-                    {theNodes.map((item, index) => {
-                      return <MenuItem key={index} value={item.shape ? item.shape : ''}>{item.label}</MenuItem>
-                    })}
-                  </Select>
-                </FormControl>
-              </Box>
+    <>
+      {/* color interno figura*/}
+      <Typography><span style={{ fontSize: '22px' }}>&#9635;&#9673;</span></Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Colorful
+          color={background}
+          setColor={setBackground} />
+      </Box>
+    </>
+  )
+}
+function SelectBorder({ borderWidth, setBorderWidth, border, setBorder }) {
+  return (
+    <>
+      {/* color borde figura*/}
+      <Box sx={{ width: 200 }}>
+        <Typography><span style={{ fontSize: '22px' }}>&#128913;&#128902;</span></Typography>
+        <Colorful
+          color={border}
+          setColor={setBorder} />
 
+        <Slider
+          aria-label="border-width"
+          valueLabelDisplay="auto"
+          min={0}
+          max={10}
+          value={borderWidth}
+          onChange={(e) => setBorderWidth(e.target.value)}
+        />
+      </Box>
+    </>
+  )
+}
+function SelectShapes({ theNodes, nodeShape, setNodeShape }) {
 
-              {/* <select size="4" className="vis-configuration vis-config-select"
-                value={nodeShape}
-                onChange={e => setNodeShape(e.target.value)}
-              >
-                {theNodes.map(item => {
-                  return (<option key={item.id} value={item.shape ? item.shape : ''}> {item.label}</option>)
-                })}
-              </select> */}
-
-            </td>
-            <td >
-              {/* <td style={{display:'grid' }}> */}
-              <Typography>color nodo</Typography>
-              <Colorful
-                color={background}
-                setColor={setBackground} />
-            </td>
-            <td >
-              <Typography>color borde</Typography>
-              <Colorful
-                color={border}
-                setColor={setBorder} />
-
-              <Box sx={{ width: 300 }}>
-                <Slider
-                  aria-label="border-width"
-                  valueLabelDisplay="auto"
-                  min={0}
-                  max={10}
-                  value={borderWidth}
-                  onChange={(e) => setBorderWidth(e.target.value)}
-                />
-              </Box>
-
-              {/* <input className="vis-configuration vis-config-range" type="range" min="0" max="10" step="1"
-                value={borderWidth} onChange={(e) => setBorderWidth(e.target.value)} /> */}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  function iconShape(shape) {
+    const size = '20px'
+    const sizeMin = '14px'
+    const sizeMax = '27px'
+    switch (shape) {
+      case 'box':
+        return <span style={{ fontSize: size }}>&#9645;</span>
+      case 'circle':
+        return <span style={{ fontSize: size }}>&#9711;</span>
+      case 'ellipse':
+        return <span style={{ fontSize: size }}>&#11053;</span>
+      case 'text':
+        return <span style={{ fontSize: sizeMin }}>text</span>
+      case 'star':
+        return <span style={{ fontSize: size }}>&#9734;</span>
+      case 'square':
+        return <span style={{ fontSize: size }}>&#9634;</span>
+      case 'dot':
+        return <span style={{ fontSize: size }}>&#9702;</span>
+      case 'hexagon':
+        return <span style={{ fontSize: size }}>&#11041;</span>
+      case 'diamond':
+        return <span style={{ fontSize: sizeMax }}>&#9671;</span>
+      case 'triangle':
+        return <span style={{ fontSize: size }}>&#9651;</span>
+      case 'triangleDown':
+        return <span style={{ fontSize: size }}>&#9661;</span>
+    }
+  }
+  return (
+    <div >
+      <Box >
+        <FormControl sx={{ width: 80 }}  >
+          <InputLabel id="select-nodo-tipo"><span style={{ fontSize: '22px' }}>&#128981;&#128983;</span></InputLabel>
+          <Select
+            labelId="select-nodo-tipo"
+            value={nodeShape}
+            label="nodeShape"
+            size="4"
+            onChange={e => setNodeShape(e.target.value)}
+          >
+            {theNodes.map((item, index) => {
+              return <MenuItem key={index} value={item.shape ? item.shape : ''}>{iconShape(item.shape)}</MenuItem>
+            })}
+          </Select>
+        </FormControl>
+      </Box>
     </div>
   )
 }

@@ -37,6 +37,9 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
   const [nodeCheck, setNodeCheck] = useState(true);
   const [edgeCheck, setEdgeCheck] = useState(true);
 
+  const [edgePhysics, setPhysics] = useState(false);
+  const [edgeHierarchical, setHierarchical] = useState(false);
+
   const networkRef = useRef(null);
   const nodeConfig = useRef({})
   const edgeConfig = useRef({})
@@ -85,21 +88,33 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
           networkRef={networkRef}
           editNode={editNode}
           editEdge={editEdge}
+          edgePhysics={edgePhysics}
+          edgeHierarchical={edgeHierarchical}
         />
 
         <Stack direction="column">
 
           <Item elevation={8} style={{ margin: '5px' }}>
             <FormControlLabel
+              control={<Checkbox {...label} value={edgeHierarchical} onClick={() => setHierarchical(!edgeHierarchical)} />}
+              label={<Typography color="primary">setHierarchical</Typography>} />
+
+            <FormControlLabel
+              control={<Checkbox {...label} value={edgePhysics} onClick={() => setPhysics(!edgePhysics)} />}
+              label={<Typography color="primary">setPhysics</Typography>} />
+          </Item>
+
+          <Item elevation={8} style={{ margin: '5px' }}>
+            <FormControlLabel
               control={<Checkbox {...label} defaultChecked value={nodeCheck} onClick={() => setNodeCheck(!nodeCheck)} />}
               label={<Typography color="primary">Aplicar configuración de nodo</Typography>} />
             <VisNodeForm nodeConfig={nodeConfig} />
-
           </Item>
+
           <Item elevation={8} style={{ margin: '5px' }}>
             <FormControlLabel
               control={<Checkbox {...label} defaultChecked value={edgeCheck} onClick={() => setEdgeCheck(!edgeCheck)} />}
-              label={<Typography color="primary">Aplicar configuración de línea</Typography>} />
+              label={<Typography color="primary">Aplicar configuración de segmento</Typography>} />
             <VisEdgeForm edgeConfig={edgeConfig} />
           </Item>
         </Stack>
@@ -141,11 +156,13 @@ function EditNode({ nodeConfig, dataNode, isVisible, setIsVisible, nodeLabel, se
 function EditEdge({ edgeConfig, dataEdge, isEVisible, setIsEVisible, edgeLabel, setEdgeLabel, edgeCheck }) {
 
   function saveEdgeData() {
-    // let data = dataEdge.data
-    // console.log('  saveEdgeData', edgeConfig)
+
     if (edgeCheck) {
       // console.log('xxxxxx edgeConfig.current------ ', edgeConfig.current)
+      // dataEdge.data.physics = edgeConfig.current.physics ? edgeConfig.current.physics : false
       dataEdge.data.arrows = edgeConfig.current.arrows ? edgeConfig.current.arrows : ''
+      dataEdge.data.smooth = edgeConfig.current.smooth ? edgeConfig.current.smooth : ''
+      dataEdge.data.width = edgeConfig.current.width ? edgeConfig.current.width : ''
       dataEdge.data.color = edgeConfig.current.color ? edgeConfig.current.color : ''
       dataEdge.data.font = edgeConfig.current.font ? edgeConfig.current.font : false
       dataEdge.data.dashes = edgeConfig.current.dashes // ? edgeConfig.current.dashes : '', no porque cuando false, tssss
@@ -156,16 +173,21 @@ function EditEdge({ edgeConfig, dataEdge, isEVisible, setIsEVisible, edgeLabel, 
     dataEdge.data.label = edgeLabel
     setIsEVisible(false)
     dataEdge.callback(dataEdge.data);
-
+  }
+  function handleCancel() {
+    dataEdge.callback(null);
+    setIsEVisible(false)
   }
 
+  // CAMBIARLO POR UN DIALOG O MODAL o tal vez no es necesario
   return (
     <Item elevation={8} style={{ display: isEVisible ? 'block' : 'none', borderStyle: 'none' }} id="edge-popUp">
       <Typography >tu texto - opcional</Typography>
       <input value={edgeLabel} onChange={(e) => setEdgeLabel(e.target.value)} />
       <Box>
         <Button size="small" variant="contained" onClick={saveEdgeData} sx={{ padding: '2px 4px', fontSize: '0.7rem' }} >save</Button>
-        <Button size="small" variant="outlined" onClick={() => setIsEVisible(false)} sx={{ margin: '14px', padding: '2px 4px', fontSize: '0.7rem' }} >cancel</Button>
+        {/* <Button size="small" variant="outlined" onClick={() => setIsEVisible(false)} sx={{ margin: '14px', padding: '2px 4px', fontSize: '0.7rem' }} >cancel</Button> */}
+        <Button size="small" variant="outlined" onClick={handleCancel} sx={{ margin: '14px', padding: '2px 4px', fontSize: '0.7rem' }} >cancel</Button>
       </Box>
     </Item>
   )

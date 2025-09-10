@@ -19,9 +19,9 @@ import './network.css'
 // https://visjs.github.io/vis-network/examples/network/data/dotLanguage/dotEdgeStyles.html
 // { theNodes: [], theEdges: [] }
 export default function VisNetwork({ modoEdicion = false, networkRef, data = { theNodes: [], theEdges: [] },
-  editNode = null, editEdge = null
+  editNode = null, editEdge = null, edgePhysics = false, edgeHierarchical = false
 }) {
-const {setVisNRef, setVisNItem} = useVisNContext()
+  const { setVisNRef, setVisNItem } = useVisNContext()
 
   const { theNodes, theEdges } = data
   const elementRef = useRef();
@@ -98,16 +98,20 @@ const {setVisNRef, setVisNItem} = useVisNContext()
           return;
         }
       }
-      // console.log(' -- addEdge --   data ', data)
-      // editEdge(data, callback);
-      callback(data);
+      // console.log(' -- ++ -- addEdge --   data ', data)
+      editEdge(data, callback);
+      // callback(data);
     },
-    editEdge: {
-      editWithoutDrag: function (data, callback) {
-        editEdge(data, callback);
-        // callback(data);
-      },
-    },
+    // editEdge: {
+    //   editWithoutDrag: function (data, callback) {
+    //     editEdge(data, callback);
+    //     // callback(data);
+    //   },
+    // },
+    editEdge: function (data, callback) {
+      editEdge(data, callback);
+      // callback(data);
+    }
   }
   // ===================================
   const networkOptions_edit = useMemo(() => {
@@ -117,39 +121,7 @@ const {setVisNRef, setVisNItem} = useVisNContext()
       // configure: false,
       // configure: configureOpt,
       // manipulation: true,
-      manipulation: {
-        addNode: function (data, callback) {
-          // filling in the popup DOM elements
-          // nodeOperationRef.current.innerText = "Add Nodeeee"
-          //console.log(' -- addNode --   data ', data)
-          // data.shape = 'star'
-          // data.widthConstraint= { minimum: 120, maximum: 170 }
-          // data.widthConstraint = 150
-          data.label = '😊'//"<b>This</b>😊 <i>hola</i>"
-          // callback(data);
-          editNode(data, callback);
-        },
-        editNode: function (data, callback) {
-          // setVisNValuesForm(data)
-          editNode(data, callback);
-        },
-        addEdge: function (data, callback) {
-          if (data.from == data.to) {
-            var r = confirm("Do you want to connect the node to itself?");
-            if (r != true) {
-              callback(null);
-              return;
-            }
-          }
-          // console.log(' -- addEdge --   data ', data)
-          // editEdge(data, callback);
-          callback(data);
-        },
-        editEdge: function (data, callback) {
-          editEdge(data, callback);
-          // callback(data);
-        }
-      },
+      manipulation: manipulationConf,
       nodes: {
         font: { multi: true },
         // widthConstraint: 150, // { minimum: 120, maximum: 170, x:undefined, y:undefined }
@@ -160,12 +132,12 @@ const {setVisNRef, setVisNItem} = useVisNContext()
         }
       },
       layout: {
-        hierarchical: false,// true, // isCluster -> para borrar ?
+        hierarchical: false,// true,false  // isCluster -> para borrar ?
         // hierarchical: { nodeSpacing: 10, parentCentralization: true }
       },
-      physics: false,
+      physics: { enabled: false },// false,
       // clickToUse:true,
-      // interaction: { navigationButtons: true, hover: true },
+      interaction: { navigationButtons: true, hover: true },
       // onInitial : function () {
       //   console.log('ajaaaaaaaaaaaaaaaaaaaaaaa ')
       // },
@@ -177,6 +149,7 @@ const {setVisNRef, setVisNItem} = useVisNContext()
       font: { multi: true },
       // widthConstraint: 150, // { minimum: 120, maximum: 170, x:undefined, y:undefined }
     },
+    interaction: { hover: true },
   }
 
   // ===================================
@@ -184,16 +157,24 @@ const {setVisNRef, setVisNItem} = useVisNContext()
   networkOptions = modoEdicion ? networkOptions_edit : networkOptions_noEdit
 
   useEffect(() => {
+    if (networkRef.current) {
+      // console.log(' edgePhysics  ', edgePhysics   layout:{hierarchical: true}    )
+      // networkRef.current.setOptions({ physics: { enabled: edgePhysics } })
+      // networkRef.current.setOptions({ layout: { hierarchical: edgeHierarchical } })
+
+      networkRef.current.setOptions({ physics: { enabled: edgePhysics }, layout: { hierarchical: edgeHierarchical } })
+    }
+
     if (elementRef.current && !networkRef.current) {
       networkRef.current = new Network(
         elementRef.current,
         networkItems,
         networkOptions
       );
-if(!modoEdicion){
-  setVisNRef(networkRef)
-  setVisNItem(networkItems)
-}
+      if (!modoEdicion) {
+        setVisNRef(networkRef)
+        setVisNItem(networkItems)
+      }
 
       if (modoEdicion) {
         // networkRef.current.on("doubleClick", function (params) {
@@ -227,9 +208,10 @@ if(!modoEdicion){
         // });
 
       }
-
-
     }
+
+
+
     return () => {
       elementRef.current = null;
     };

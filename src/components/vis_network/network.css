@@ -21,8 +21,8 @@
 }
 
 .the-vis-container-edit-node {
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   border: var(--border-item-edit);
   background: var(--color-edit);
   /* box-shadow: var(--box-shadow-edit); */
