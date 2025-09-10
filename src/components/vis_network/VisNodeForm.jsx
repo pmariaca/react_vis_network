@@ -93,10 +93,11 @@ function SelectFont({ fontColor, setFontColor, fontSize, setFontSize,
     <>
       <Box sx={{ width: 200 }}>
         <Typography><span style={{ fontSize: '32px' }}>&#9997;</span></Typography>
-        <Colorful
-          color={fontColor}
-          setColor={setFontColor} />
-
+        <Box  sx={{ marginBottom:'5px'}} >
+          <Colorful
+            color={fontColor}
+            setColor={setFontColor} />
+        </Box>
         <Slider
           aria-label="font-size"
           valueLabelDisplay="auto"
@@ -128,10 +129,12 @@ function SelectBorder({ borderWidth, setBorderWidth, border, setBorder }) {
       {/* color borde figura*/}
       <Box sx={{ width: 200 }}>
         <Typography><span style={{ fontSize: '22px' }}>&#128913;&#128902;</span></Typography>
-        <Colorful
-          color={border}
-          setColor={setBorder} />
 
+        <Box  sx={{ marginBottom:'5px'}} >
+          <Colorful
+            color={border}
+            setColor={setBorder} />
+        </Box>
         <Slider
           aria-label="border-width"
           valueLabelDisplay="auto"

@@ -89,7 +89,7 @@ function SelectFont({ fontColor, setFontColor, fontBackground, setFontBackground
     <>
       <Box sx={{ width: 200 }}>
         <Typography><span style={{ fontSize: '32px' }}>&#9997;</span></Typography>
-        <Stack direction="row" style={{ display: 'flex', justifyContent: 'space-between' }} >
+        <Stack direction="row" sx={{ marginBottom:'5px'}} style={{ display: 'flex', justifyContent: 'space-between' }} >
           <Colorful
             color={fontColor}
             setColor={setFontColor} />
@@ -117,10 +117,11 @@ function SelectEdgeWidthColor({ color, setColor, edgeWidth, setEdgeWidth }) {
     <>
       <Box sx={{ width: 200 }}>
         <Typography><span style={{ fontSize: '32px' }}>&#8692;&#129042;&#129050;</span></Typography>
-        <Colorful
-          color={color}
-          setColor={setColor} />
-
+        <Box sx={{ marginBottom: '5px' }} >
+          <Colorful
+            color={color}
+            setColor={setColor} />
+        </Box>
         <Slider
           aria-label="edge-width"
           valueLabelDisplay="auto"
