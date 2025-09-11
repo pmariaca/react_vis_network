@@ -28,7 +28,6 @@ export default function VisEdgeForm({ edgeConfig }) {
   const networkviewRef = useRef(null);
 
   const [edgeArrow, setEdgeArrow] = useState(1)
-  const [edgeArrowType, setEdgeArrowType] = useState(false)
   const [edgeWidth, setEdgeWidth] = useState(1)
 
   const [color, setColor] = useState('#2B7CE9') // color
@@ -38,7 +37,7 @@ export default function VisEdgeForm({ edgeConfig }) {
   const [fontBackground, setFontBackground] = useState(undefined)
 
   const edgeCosas = {
-    edgeArrow: edgeArrow, color: color, edgeWidth, edgeArrowType: edgeArrowType,
+    edgeArrow: edgeArrow, color: color, edgeWidth,
     fontColor: fontColor, fontSize: fontSize, fontBackground: fontBackground
   }
   return (
@@ -75,10 +74,6 @@ export default function VisEdgeForm({ edgeConfig }) {
           setEdgeArrow={setEdgeArrow}
         />
 
-        <SelectEdgesArrowType
-          edgeArrowType={edgeArrowType}
-          setEdgeArrowType={setEdgeArrowType}
-        />
         <div></div><div></div><div></div>
       </Stack>
     </div>
@@ -135,33 +130,6 @@ function SelectEdgeWidthColor({ color, setColor, edgeWidth, setEdgeWidth }) {
   )
 }
 
-function SelectEdgesArrowType({ edgeArrowType, setEdgeArrowType }) {
-  const smooth = ['dynamic', 'diagonalCross', 'straightCross', 'curvedCW', 'curvedCCW', 'cubicBezier']
-  // const smooth = ['dynamic', 'diagonalCross', 'straightCross', 'curvedCW', 'curvedCCW', 'cubicBezier']
-  return (
-    <Box >
-      <FormControl sx={{ width: 80 }}
-      //   fullWidth sx={{   width: 200,   height: 120,  }}
-      >
-        {/* &#11099; &#11118;   &#11150;  &#11153; */}
-        <InputLabel id="select-edge-tipo-tipo"><span style={{ fontSize: '26px' }}> &#11150; </span></InputLabel>
-        <Select
-          // multiple native
-          labelId="select-edge-tipo-tipo"
-          value={edgeArrowType}
-          label="edgeArrowType"
-          size="4"
-          onChange={e => setEdgeArrowType(e.target.value)}
-        >
-          <MenuItem value={false} ><Typography style={{ fontSize: '12px' }}>ninguno</Typography></MenuItem>
-          {smooth.map((item, index) => {
-            return <MenuItem key={index} value={item}> <Typography style={{ fontSize: '12px' }}>{item}</Typography> </MenuItem>
-          })}
-        </Select>
-      </FormControl>
-    </Box>
-  )
-}
 function SelectEdgesArrow({ theEdges, edgeArrow, setEdgeArrow }) {
 
   function iconArrow(tipo) {

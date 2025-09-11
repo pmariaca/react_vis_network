@@ -47,6 +47,7 @@ const VisNProvider = ({ children }) => {
     id: '',
     // smooth:false,
     smooth: {
+      // no aplica para herencia layout: {hierarchical: true}
       type: 'dynamic', // 'diagonalCross', 'straightCross', 'curvedCW', 'curvedCCW', 'cubicBezier'
     },
     color: {
@@ -59,7 +60,21 @@ const VisNProvider = ({ children }) => {
     dashes: false,
     font: { color: '#343434', size: parseInt('12'), background: undefined },// hay mas, size max 100
   });
-
+  // https://visjs.github.io/vis-network/examples/network/edgeStyles/arrowTypes.html
+  // { from: 0, to: 1, arrows: { to: { enabled: true,type:'box'  , scaleFactor: 2 } } },
+  var arrow_types = [
+    "arrow",
+    "bar",
+    "circle",
+    "box",
+    "crow",
+    "curve",
+    "inv_curve",
+    "diamond",
+    "triangle",
+    "inv_triangle",
+    "vee",
+  ];
   return (
     <StateContext.Provider value={{
       visNRef, setVisNRef,

@@ -132,8 +132,7 @@ export default function VisEdgeView({ networkviewRef, data, edgeConfig = {}, edg
 function edgeTodoConfig(edgesView, edgeCosas) {
   // console.log('nodeCosas  -------------------- ', edgeCosas)
   // const { color, fontColor, fontSize, borderWidth, border } = edgeCosas
-  const { edgeArrow,  edgeWidth, edgeArrowType, color, fontColor, fontSize, fontBackground } = edgeCosas
-// edgePhysics,
+  const { edgeArrow,  edgeWidth, color, fontColor, fontSize, fontBackground } = edgeCosas
   const theN = edgesView.get(edgesView.getIds()[0])
 
   let dashes = false
@@ -147,8 +146,6 @@ function edgeTodoConfig(edgesView, edgeCosas) {
       item.color = { color: color, highlight: color }
       item.dashes = dashes
       item.width = edgeWidth
-      // item.physics = edgePhysics
-      item.smooth = { type: edgeArrowType }
       item.font = { color: fontColor, size: parseInt(fontSize), background: fontBackground }
       return item
     }
@@ -157,8 +154,6 @@ function edgeTodoConfig(edgesView, edgeCosas) {
         ...item,
         color: { color: color, highlight: color },
         width: edgeWidth,
-        // physics: edgePhysics,
-        smooth: { type: edgeArrowType },
         dashes: dashes,
         font: { color: fontColor, size: parseInt(fontSize), background: fontBackground }
       };

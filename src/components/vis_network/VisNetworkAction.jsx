@@ -8,8 +8,15 @@ import './network_action.css'
 
 import { Box, Stack, Checkbox, Typography, Button } from '@mui/material'
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
+import Tooltip from '@mui/material/Tooltip';
+
+import { GiTreeRoots, GiPlantRoots, GiThreeLeaves } from "react-icons/gi";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -39,6 +46,11 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
 
   const [edgePhysics, setPhysics] = useState(false);
   const [edgeHierarchical, setHierarchical] = useState(false);
+  const [shakeTowards, setShakeTowards] = useState('roots');
+  const [edgeDirection, setEdgeDirection] = useState('UD');
+
+
+  const [edgeArrowType, setEdgeArrowType] = useState('dynamic')
 
   const networkRef = useRef(null);
   const nodeConfig = useRef({})
@@ -58,6 +70,10 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
     setIsEVisible(true)
   }
 
+  const configEdgesGral = {
+    edgePhysics: edgePhysics, edgeHierarchical: edgeHierarchical, edgeDirection: edgeDirection,
+    shakeTowards: shakeTowards, edgeArrowType: edgeArrowType
+  }
   return (
     <div>
       <EditNode
@@ -82,28 +98,35 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
 
       <Stack direction="row-inverse">
 
-        <VisNetwork
-          modoEdicion={true}
-          data={data}
-          networkRef={networkRef}
-          editNode={editNode}
-          editEdge={editEdge}
-          edgePhysics={edgePhysics}
-          edgeHierarchical={edgeHierarchical}
-        />
-
         <Stack direction="column">
-
           <Item elevation={8} style={{ margin: '5px' }}>
-            <FormControlLabel
-              control={<Checkbox {...label} value={edgeHierarchical} onClick={() => setHierarchical(!edgeHierarchical)} />}
-              label={<Typography color="primary">setHierarchical</Typography>} />
-
-            <FormControlLabel
-              control={<Checkbox {...label} value={edgePhysics} onClick={() => setPhysics(!edgePhysics)} />}
-              label={<Typography color="primary">setPhysics</Typography>} />
+            <EditGral
+              edgeHierarchical={edgeHierarchical}
+              setHierarchical={setHierarchical}
+              edgePhysics={edgePhysics}
+              setPhysics={setPhysics}
+              shakeTowards={shakeTowards}
+              setShakeTowards={setShakeTowards}
+              edgeArrowType={edgeArrowType}
+              setEdgeArrowType={setEdgeArrowType}
+              edgeDirection={edgeDirection}
+              setEdgeDirection={setEdgeDirection}
+            />
           </Item>
 
+          <VisNetwork
+            modoEdicion={true}
+            data={data}
+            networkRef={networkRef}
+            editNode={editNode}
+            editEdge={editEdge}
+            configEdgesGral={configEdgesGral}
+          />
+
+
+        </Stack>
+
+        <Stack direction="column">
           <Item elevation={8} style={{ margin: '5px' }}>
             <FormControlLabel
               control={<Checkbox {...label} defaultChecked value={nodeCheck} onClick={() => setNodeCheck(!nodeCheck)} />}
@@ -119,23 +142,61 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
           </Item>
         </Stack>
       </Stack>
-
     </div>
   )
 }
 
+function EditGral({ edgeHierarchical, setHierarchical, edgePhysics, setPhysics, shakeTowards, setShakeTowards,
+  edgeArrowType, setEdgeArrowType, edgeDirection, setEdgeDirection
+}) {
+
+  return (
+    <>
+      <Stack direction="row" sx={{
+        justifyContent: "space-between",
+        alignItems: "center",
+      }} >
+        <FormControlLabel
+          control={<Checkbox {...label} value={edgeHierarchical} onClick={() => setHierarchical(!edgeHierarchical)} />}
+          label={<Typography color="primary">Genealogía</Typography>} />
+
+        {edgeHierarchical && (
+          <>
+            <SelectHierachicalOpt
+              shakeTowards={shakeTowards}
+              setShakeTowards={setShakeTowards}
+            />
+            <SelectEdgeDirection
+              edgeDirection={edgeDirection}
+              setEdgeDirection={setEdgeDirection}
+            />
+          </>
+        )}
+
+        <FormControlLabel
+          control={<Checkbox {...label} value={edgePhysics} onClick={() => setPhysics(!edgePhysics)} />}
+          label={<Typography color="primary">Viento&#9730;&#9928;</Typography>} />
+
+        <SelectEdgesArrowType
+          edgeArrowType={edgeArrowType}
+          setEdgeArrowType={setEdgeArrowType}
+        />
+      </Stack>
+    </>
+  )
+}
 function EditNode({ nodeConfig, dataNode, isVisible, setIsVisible, nodeLabel, setNodeLabel, nodeCheck }) {
 
   function saveNodeData() {
     //console.log('dataNode', dataNode)
-
     if (nodeCheck) {
-      dataNode.data.shape = nodeConfig.current.shape ? nodeConfig.current.shape : ''
+      let typeShape = dataNode.data.shape == ("circularImage") || dataNode.data.shape == ("image")
+      // console.log('nodeConfig.current.shape  - ', nodeConfig.current.shape )
+      dataNode.data.shape = (typeShape ? dataNode.data.shape : (nodeConfig.current.shape ? nodeConfig.current.shape : ''))
       dataNode.data.borderWidth = nodeConfig.current.borderWidth ? nodeConfig.current.borderWidth : ''
       dataNode.data.color = nodeConfig.current.color ? nodeConfig.current.color : ''
       dataNode.data.font = nodeConfig.current.font ? nodeConfig.current.font : ''
     }
-
     dataNode.data.label = nodeLabel
     // console.log('----------  dataNode.callback .-.-. ', dataNode.callback)
     setIsVisible(false)
@@ -144,7 +205,7 @@ function EditNode({ nodeConfig, dataNode, isVisible, setIsVisible, nodeLabel, se
   return (
     <Item elevation={8} style={{ display: isVisible ? 'block' : 'none', borderStyle: 'none' }} id="node-popUp">
       <Typography >tu texto</Typography>
-      <input value={nodeLabel} onChange={(e) => setNodeLabel(e.target.value)} />
+      <input value={nodeLabel ? nodeLabel : ''} onChange={(e) => setNodeLabel(e.target.value)} />
       <Box>
         <Button size="small" variant="contained" onClick={saveNodeData} sx={{ padding: '2px 4px', fontSize: '0.7rem' }} >save</Button>
         <Button size="small" variant="outlined" onClick={() => setIsVisible(false)} sx={{ margin: '14px', padding: '2px 4px', fontSize: '0.7rem' }} >cancel</Button>
@@ -152,7 +213,6 @@ function EditNode({ nodeConfig, dataNode, isVisible, setIsVisible, nodeLabel, se
     </Item>
   )
 }
-
 function EditEdge({ edgeConfig, dataEdge, isEVisible, setIsEVisible, edgeLabel, setEdgeLabel, edgeCheck }) {
 
   function saveEdgeData() {
@@ -161,7 +221,7 @@ function EditEdge({ edgeConfig, dataEdge, isEVisible, setIsEVisible, edgeLabel, 
       // console.log('xxxxxx edgeConfig.current------ ', edgeConfig.current)
       // dataEdge.data.physics = edgeConfig.current.physics ? edgeConfig.current.physics : false
       dataEdge.data.arrows = edgeConfig.current.arrows ? edgeConfig.current.arrows : ''
-      dataEdge.data.smooth = edgeConfig.current.smooth ? edgeConfig.current.smooth : ''
+      // dataEdge.data.smooth = edgeConfig.current.smooth ? edgeConfig.current.smooth : ''
       dataEdge.data.width = edgeConfig.current.width ? edgeConfig.current.width : ''
       dataEdge.data.color = edgeConfig.current.color ? edgeConfig.current.color : ''
       dataEdge.data.font = edgeConfig.current.font ? edgeConfig.current.font : false
@@ -186,13 +246,110 @@ function EditEdge({ edgeConfig, dataEdge, isEVisible, setIsEVisible, edgeLabel, 
       <input value={edgeLabel} onChange={(e) => setEdgeLabel(e.target.value)} />
       <Box>
         <Button size="small" variant="contained" onClick={saveEdgeData} sx={{ padding: '2px 4px', fontSize: '0.7rem' }} >save</Button>
-        {/* <Button size="small" variant="outlined" onClick={() => setIsEVisible(false)} sx={{ margin: '14px', padding: '2px 4px', fontSize: '0.7rem' }} >cancel</Button> */}
         <Button size="small" variant="outlined" onClick={handleCancel} sx={{ margin: '14px', padding: '2px 4px', fontSize: '0.7rem' }} >cancel</Button>
       </Box>
     </Item>
   )
 }
-
+function SelectEdgesArrowType({ edgeArrowType, setEdgeArrowType }) {
+  const smooth = ['dynamic', 'continuous', 'discrete', 'diagonalCross', 'straightCross', 'curvedCW', 'curvedCCW', 'cubicBezier']
+  // const smooth = ['dynamic',  'continuous', 'discrete', 'continuous', 'discrete' 'diagonalCross', 'straightCross', 'curvedCW', 'curvedCCW', 'cubicBezier']
+  return (
+    <Box >
+      <FormControl sx={{ width: 120 }}
+      //   fullWidth sx={{   width: 200,   height: 120,  }}
+      >
+        {/* &#11099; &#11118;   &#11150;  &#11153; */}
+        <InputLabel id="select-edge-tipo-tipo"><span style={{ fontSize: '32px' }}>&#10547;</span></InputLabel>
+        <Select
+          // multiple native
+          labelId="select-edge-tipo-tipo"
+          value={edgeArrowType}
+          label="edgeArrowType"
+          size="4"
+          onChange={e => setEdgeArrowType(e.target.value)}
+        >
+          {smooth.map((item, index) => {
+            return <MenuItem key={index} value={item}> <Typography style={{ fontSize: '14px' }}>{item}</Typography> </MenuItem>
+          })}
+        </Select>
+      </FormControl>
+    </Box>
+  )
+}
+function SelectHierachicalOpt({ shakeTowards, setShakeTowards }) {
+  const shakeTowardsOpt = ['roots', 'leaves']
+  //  GiTreeRoots, GiPlantRoots, GiThreeLeaves 
+    function iconShake(leave) {
+    const size = '20px'
+    switch (leave) {
+      case 'roots':
+        return <span style={{ fontSize: size }}><Tooltip title="troncos"><GiTreeRoots /></Tooltip></span>
+      case 'leaves':
+        return <span style={{ fontSize: size }}><Tooltip title="hojas"><GiThreeLeaves /></Tooltip></span>
+    }
+  }
+  return (
+    <Box >
+      <FormControl sx={{ width: 80 }}
+      //   fullWidth sx={{   width: 200,   height: 120,  }}
+      >
+        {/* &#11099; &#11118;   &#11150;  &#11153; */}
+        <InputLabel id="select-edge-tipo-hierarchical"><span style={{ fontSize: '26px' }}>&#10512;</span></InputLabel>
+        <Select
+          // multiple native
+          labelId="select-edge-tipo-hierarchical"
+          value={shakeTowards}
+          label="shakeTowards"
+          size="4"
+          onChange={e => setShakeTowards(e.target.value)}
+        >
+          {shakeTowardsOpt.map((item, index) => {
+            return <MenuItem key={index} value={item}> <Typography style={{ fontSize: '14px' }}>{iconShake(item)}</Typography> </MenuItem>
+          })}
+        </Select>
+      </FormControl>
+    </Box>
+  )
+}
+function SelectEdgeDirection({ edgeDirection, setEdgeDirection }) {
+  const direction = ['UD', 'DU', 'LR', 'RL']
+  function iconDirection(direction) {
+    const size = '20px'
+    switch (direction) {
+      case 'UD':
+        return <span style={{ fontSize: size }}>&#9759;</span>
+      case 'DU':
+        return <span style={{ fontSize: size }}>&#9757;</span>
+      case 'LR':
+        return <span style={{ fontSize: size }}>&#9758;</span>
+      case 'RL':
+        return <span style={{ fontSize: size }}>&#9756;</span>
+    }
+  }
+  return (
+    <Box >
+      <FormControl sx={{ width: 80 }}
+      //   fullWidth sx={{   width: 200,   height: 120,  }}
+      >
+        {/* &#11099; &#11118;   &#11150;  &#11153; */}
+        <InputLabel id="select-edge-tipo-direction"><span style={{ fontSize: '28px' }}> &#10226;</span></InputLabel>
+        <Select
+          // multiple native
+          labelId="select-edge-tipo-direction"
+          value={edgeDirection}
+          label="edgeDirection"
+          size="4"
+          onChange={e => setEdgeDirection(e.target.value)}
+        >
+          {direction.map((item, index) => {
+            return <MenuItem key={index} value={item}> <Typography style={{ fontSize: '14px' }}>{iconDirection(item)}</Typography> </MenuItem>
+          })}
+        </Select>
+      </FormControl>
+    </Box>
+  )
+}
 
 
 export default VisNetworkAction

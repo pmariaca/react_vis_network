@@ -1,7 +1,7 @@
 const theNodes = [
   { id: 1, label: "Nodo fijo", x: -180, y: 10, fixed: true },
   { id: 2, label: "Drag", x: 10, y: 130, physics: false },
-  { id: 3, label: "Obstaculo", x: -80, y: 60, fixed: true, mass: 10 },
+  // { id: 3, label: "Obstaculo", x: -80, y: 60, fixed: true, mass: 10 },
 ]
 
 const theNodesdd = [
@@ -20,3 +20,4 @@ const theEdges = [
 
 export default { theNodes: theNodes, theEdges: theEdges }
 
+// https://stackoverflow.com/questions/50766239/avoiding-overlapping-edges-with-minimal-physics-in-vis-js

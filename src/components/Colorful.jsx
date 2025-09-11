@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material';
 import { useState, useRef, useEffect } from 'react'
 import { HexAlphaColorPicker, HexColorInput } from "react-colorful";
-// https://react-colorful.netlify.app/docs/input-hexcolorinput--overview
+
 // hex
 function Colorful({ color, setColor, }) {
   const copyRef = useRef()

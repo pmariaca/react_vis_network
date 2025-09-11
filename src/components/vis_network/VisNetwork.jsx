@@ -19,7 +19,7 @@ import './network.css'
 // https://visjs.github.io/vis-network/examples/network/data/dotLanguage/dotEdgeStyles.html
 // { theNodes: [], theEdges: [] }
 export default function VisNetwork({ modoEdicion = false, networkRef, data = { theNodes: [], theEdges: [] },
-  editNode = null, editEdge = null, edgePhysics = false, edgeHierarchical = false
+  editNode = null, editEdge = null, configEdgesGral = {}
 }) {
   const { setVisNRef, setVisNItem } = useVisNContext()
 
@@ -126,14 +126,24 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
         font: { multi: true },
         // widthConstraint: 150, // { minimum: 120, maximum: 170, x:undefined, y:undefined }
       },
-      edges: {
-        smooth: {
-          forceDirection: 'none'
-        }
-      },
+      // edges: {
+      //   smooth: {
+      //     forceDirection: 'none'
+      //     // forceDirection:
+      //     //   directionInput.value == "UD" || directionInput.value == "DU"
+      //     //     ? "vertical"
+      //     //     : "horizontal",
+      //   }
+      // },
       layout: {
-        hierarchical: false,// true,false  // isCluster -> para borrar ?
-        // hierarchical: { nodeSpacing: 10, parentCentralization: true }
+        // hierarchical: false,// true,false  // isCluster -> para borrar ?
+        hierarchical: {
+          enabled: false,
+          // nodeSpacing: 10,
+          // parentCentralization: true,
+          sortMethod: 'directed',  // hubsize, directed
+          shakeTowards: 'roots'  // roots, leaves
+        }
       },
       physics: { enabled: false },// false,
       // clickToUse:true,
@@ -141,6 +151,7 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
       // onInitial : function () {
       //   console.log('ajaaaaaaaaaaaaaaaaaaaaaaa ')
       // },
+      // afterDrawing: console.log('  -----------------------   afterDrawing')
     }
   }, [])
   const networkOptions_noEdit = {
@@ -151,32 +162,45 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
     },
     interaction: { hover: true },
   }
-
+  function handleConfChange() {
+    draw(new FormData(conf));
+  }
   // ===================================
   let networkOptions = {}
   networkOptions = modoEdicion ? networkOptions_edit : networkOptions_noEdit
 
   useEffect(() => {
-    if (networkRef.current) {
-      // console.log(' edgePhysics  ', edgePhysics   layout:{hierarchical: true}    )
-      // networkRef.current.setOptions({ physics: { enabled: edgePhysics } })
-      // networkRef.current.setOptions({ layout: { hierarchical: edgeHierarchical } })
-
-      networkRef.current.setOptions({ physics: { enabled: edgePhysics }, layout: { hierarchical: edgeHierarchical } })
-    }
-
     if (elementRef.current && !networkRef.current) {
       networkRef.current = new Network(
         elementRef.current,
         networkItems,
         networkOptions
       );
+      // console.log('-.--.-.', networkRef.current.options)
       if (!modoEdicion) {
         setVisNRef(networkRef)
         setVisNItem(networkItems)
       }
 
       if (modoEdicion) {
+
+        // networkRef.current.cluster({
+        //   joinCondition(nodeOptions) {
+        //     return !!formData.get(`cluster-node-${nodeOptions.id}`);
+        //   },
+        // });
+
+        // networkRef.current.on("afterDrawing", function (params) {
+        //   console.log(' on afterDrawing ', params)
+        // });
+
+        networkRef.current.on("configChange", function (updatedOptions) {
+          console.log("Network configuration changed:", updatedOptions);
+          // Example: Save the updated options to local storage
+          // localStorage.setItem("visNetworkOptions", JSON.stringify(updatedOptions));
+        });
+
+
         // networkRef.current.on("doubleClick", function (params) {
         //   params.event = "[original event]";
         //   // console.log(' on doubleClick ', params)
@@ -210,15 +234,87 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
       }
     }
 
+    // ---------------------------------
+    if (networkRef.current) {
 
+      const { edgeHierarchical, edgeDirection, shakeTowards, edgePhysics, edgeArrowType } = configEdgesGral
+      // console.log(' edgePhysics  ', edgePhysics   layout:{hierarchical: true}    )
+      let confGralEdges = {}// { smooth: { enabled: false } }
+      // shakeTowards: 'roots'  // roots, leaves
+      // const smoothEnabled  = false
 
+      networkRef.current.setOptions({
+        physics: { enabled: edgePhysics },
+        // layout: { hierarchical: { enabled: edgeHierarchical, shakeTowards: shakeTowards } },
+        // https://visjs.github.io/vis-network/examples/network/layout/hierarchicalLayoutUserdefined.html
+        layout: { hierarchical: { enabled: edgeHierarchical, shakeTowards: shakeTowards, direction: edgeDirection } },  //  // UD, DU, LR, RL
+        edges: {
+          smooth: { enabled: true, type: edgeArrowType },
+          // arrows: { to: { enabled: true,type:'box', scaleFactor: scaleFactor } }  
+        }, //confGralEdges
+
+      })
+      networkRef.current.redraw()
+      // networkRef.current.setOptions({
+      //   interaction: {
+      //     // editNode: true,
+      //     // addEdge: true
+      //     // editEdge:true
+      //   }
+      // });
+    }
+    // ---------------------------------
     return () => {
       elementRef.current = null;
     };
   }, [networkItems, networkOptions]);
   //===========================================
 
+  function printNetwork() {
 
+    // NO ACTUALIZA NUEVO NODO
+    const nodess = networkItems.nodes.get();
+    // const edgess = networkItems.edges.get();
+    console.log(' networkItems nodes: ', nodess)
+    // console.log('networkItems edges:', edgess)
+    // ---------------
+    // SI ACTUALIZA NUEVO NODO y las posiciones x,y son
+    var nodes = objectToArray(networkRef.current.getPositions());
+    // visNRef, visNItemRef,
+    nodes.forEach(addConnections);
+    var exportValue = JSON.stringify(nodes, undefined, 2);
+
+    console.log(' networkItems objectToArray: ', nodes)
+    // console.log(' networkItems exportValue: ', exportValue)
+
+    "25001e8b-7eeb-4293-9d63-9188b9bf4647"
+    let theItem = networkItems.nodes.get("25001e8b-7eeb-4293-9d63-9188b9bf4647")
+    console.log(' theItem ', theItem)
+    // -----------------
+    // AQUI SI ESTAN TAMBIEN LOS NUEVOS
+    var visibleNodes = [];
+    for (var nodeId in networkRef.current.body.nodes) {
+      // Check if the node is not part of a cluster
+      if (!networkRef.current.clustering.clusteredNodes[nodeId]) {
+        visibleNodes.push(networkRef.current.body.nodes[nodeId].options); // Or just nodeId
+      }
+    }
+    console.log(visibleNodes);
+
+  }
+
+  function objectToArray(obj) {
+    // console.log( ' - obj',obj )
+    return Object.keys(obj).map(function (key) {
+      obj[key].id = key;
+      return obj[key];
+    });
+  }
+  function addConnections(elem, index) {
+    // need to replace this with a tree of the network, then get child direct children of the element
+    elem.connections = networkRef.current.getConnectedNodes(index);
+  }
+  // =====================================
   const theClass = modoEdicion ? "the-vis-container-edit" : "the-vis-container"
   return (
     <>
@@ -228,6 +324,7 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
           ref={elementRef} >
         </div>
       </div>
+      <button onClick={printNetwork} >printNetwork</button>
     </>
   )
 }

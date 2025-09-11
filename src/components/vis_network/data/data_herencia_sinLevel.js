@@ -6,6 +6,7 @@ for (var i = 0; i < 8; i++) {
 }
 edges.push({ from: 0, to: 1 });
 edges.push({ from: 0, to: 2 });
+// edges.push({ from: 0, to: 2, arrows: { "to": { enable: true, type: 'box', scaleFactor: 5 } } });
 edges.push({ from: 0, to: 3 });
 edges.push({ from: 0, to: 4 });
 edges.push({ from: 1, to: 5 });
