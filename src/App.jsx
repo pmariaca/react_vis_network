@@ -16,11 +16,11 @@ function App() {
         <Box sx={{ p: 3 }}>
           <VisEdita />
         </Box>
-        {/* <VisNProvider >
+        <VisNProvider >
           <Box sx={{ p: 3 }}>
             <VisNet />
           </Box>
-        </VisNProvider> */}
+        </VisNProvider>
       </Stack>
 
     </>

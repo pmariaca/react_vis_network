@@ -21,6 +21,11 @@ import './network.css'
 export default function VisNetwork({ modoEdicion = false, networkRef, data = { theNodes: [], theEdges: [] },
   editNode = null, editEdge = null, configEdgesGral = {}
 }) {
+  console.log('ITIT  VisNetwork          editNode    ', editNode)
+  console.log('ITIT  VisNetwork          editEdge    ', editEdge)
+  console.log('ITIT  VisNetwork          configEdgesGral    ', configEdgesGral)
+
+
   const { setVisNRef, setVisNItem } = useVisNContext()
 
   const { theNodes, theEdges } = data
@@ -168,7 +173,6 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
   // ===================================
   let networkOptions = {}
   networkOptions = modoEdicion ? networkOptions_edit : networkOptions_noEdit
-
   useEffect(() => {
     if (elementRef.current && !networkRef.current) {
       networkRef.current = new Network(
@@ -235,7 +239,7 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
     }
 
     // ---------------------------------
-    if (networkRef.current) {
+    if (networkRef.current && modoEdicion==true) {
 
       const { edgeHierarchical, edgeDirection, shakeTowards, edgePhysics, edgeArrowType } = configEdgesGral
       // console.log(' edgePhysics  ', edgePhysics   layout:{hierarchical: true}    )
@@ -254,6 +258,8 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
         }, //confGralEdges
 
       })
+
+
       networkRef.current.redraw()
       // networkRef.current.setOptions({
       //   interaction: {
