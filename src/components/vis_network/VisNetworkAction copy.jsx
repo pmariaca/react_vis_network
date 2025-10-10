@@ -93,14 +93,14 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
 
   gralNodeEdgeRef.current.node = {}
   gralNodeEdgeRef.current.edge = {}
-  if (edgeGralCheck == 'gral') {
-    console.log('xxxxxxxxxxxxxxxxxxx EditGral edgeGral---- ', edgeGral)
-    gralNodeEdgeRef.current.edge = { ...edgeGral }
-  }
-  if (nodeGralCheck == 'gral') {
-    gralNodeEdgeRef.current.node = { ...nodeGral }
-    // console.log('aaaaaaaaaaaaa EditGral gralNodeEdgeRef.current.node----- ', gralNodeEdgeRef.current.node)
-  }
+  // if (edgeGralCheck == 'gral') {
+  //   console.log('xxxxxxxxxxxxxxxxxxx EditGral edgeGral---- ', edgeGral)
+  //   gralNodeEdgeRef.current.edge = { ...edgeGral }
+  // }
+  // if (nodeGralCheck == 'gral') {
+  //   gralNodeEdgeRef.current.node = { ...nodeGral }
+  //   // console.log('aaaaaaaaaaaaa EditGral gralNodeEdgeRef.current.node----- ', gralNodeEdgeRef.current.node)
+  // }
 
   return (
     <div>
@@ -150,42 +150,59 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
             editEdge={editEdge}
             configEdgesGral={configEdgesGral}
           />
+
+
         </Stack>
 
         <Stack direction="column">
-          <Stack direction="row">
-            <Item>
-              <FormLabel id="demo-radio-buttons-group-label">Nodos</FormLabel>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                name="radio-buttons-group"
-                value={nodeGralCheck}
-                onChange={(e) => setNodeGralCheck(e.target.value)}
-              >
-                <FormControlLabel value="item" control={<Radio />} label={<Typography color="primary">Aplicar a nodo</Typography>} />
-                <FormControlLabel value="gral" control={<Radio />} label={<Typography color="primary">Configuración GENERAL-nodo</Typography>} />
-              </RadioGroup>
-            </Item>
-            <Item>
-              <FormLabel id="demo-radio-buttons-group-label">Segmentos</FormLabel>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                name="radio-buttons-group"
-                value={edgeGralCheck}
-                onChange={(e) => setEdgeGralCheck(e.target.value)}
-              >
-                <FormControlLabel value="item" control={<Radio />} label={<Typography color="primary">Aplicar a segmento de nodo</Typography>} />
-                <FormControlLabel value="gral" control={<Radio />} label={<Typography color="primary">Configuración GENERAL-segmento</Typography>} />
-              </RadioGroup>
-            </Item>
-          </Stack>
+          <Item>
+            <FormLabel id="demo-radio-buttons-group-label">Nodes</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
+              value={nodeGralCheck}
+              onChange={(e) => setNodeGralCheck(e.target.value)}
+            >
+              <FormControlLabel value="item" control={<Radio />} label={<Typography color="primary">Aplicar configuración de nodo</Typography>} />
+              <FormControlLabel value="gral" control={<Radio />} label={<Typography color="primary">Aplicar configuración de nodo GENERAL</Typography>} />
+            </RadioGroup>
+          </Item>
+          <Item>
+            <FormLabel id="demo-radio-buttons-group-label">Edges</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
+              value={edgeGralCheck}
+              onChange={(e) => setEdgeGralCheck(e.target.value)}
+            >
+              <FormControlLabel value="item" control={<Radio />} label={<Typography color="primary">Aplicar configuración de segmento</Typography>} />
+              <FormControlLabel value="gral" control={<Radio />} label={<Typography color="primary">Aplicar configuración de segmento GENERAL</Typography>} />
+            </RadioGroup>
+          </Item>
 
-          <NodeEdgeForm
+          {/* ==================================== */}
+          <Item elevation={8} style={{ margin: '5px' }}>
+            <FormControlLabel
+              control={<Checkbox {...label} defaultChecked value={nodeCheck} onClick={() => setNodeCheck(!nodeCheck)} />}
+              label={<Typography color="primary">Aplicar configuración de nodo</Typography>} />
+            <VisNodeForm nodeConfig={nodeConfig} />
+          </Item>
+
+          <Item elevation={8} style={{ margin: '5px' }}>
+            <FormControlLabel
+              control={<Checkbox {...label} defaultChecked value={edgeCheck} onClick={() => setEdgeCheck(!edgeCheck)} />}
+              label={<Typography color="primary">Aplicar configuración de segmento</Typography>} />
+            <VisEdgeForm edgeConfig={edgeConfig} />
+          </Item>
+          {/* ==================================== */}
+
+          {/* <NodeEdgeForm
             nodeConfig={nodeConfig}
             edgeConfig={edgeConfig}
+            edgeGralConfig={edgeGralConfig}
             setNodeGral={setNodeGral}
             setEdgeGral={setEdgeGral}
-          />
+          /> */}
 
         </Stack>
       </Stack>
@@ -193,16 +210,12 @@ function VisNetworkAction({ data = { theNodes: [], theEdges: [] } }) {
   )
 }
 
-function NodeEdgeForm({ nodeConfig, edgeConfig, setNodeGral, setEdgeGral }) {
-  const [expanded, setExpanded] = useState(false);
+function NodeEdgeForm({ nodeConfig, edgeConfig, edgeGralConfig, setNodeGral, setEdgeGral }) {
 
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
   return (
     <>
       {/* defaultExpanded */}
-      <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}  >
+      <Accordion defaultExpanded >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1-content"
@@ -223,7 +236,7 @@ function NodeEdgeForm({ nodeConfig, edgeConfig, setNodeGral, setEdgeGral }) {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+      <Accordion  >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2-content"

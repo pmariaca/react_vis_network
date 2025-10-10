@@ -239,24 +239,22 @@ export default function VisNetwork({ modoEdicion = false, networkRef, data = { t
     }
 
     // ---------------------------------
-    if (networkRef.current && modoEdicion==true) {
+    if (networkRef.current && modoEdicion == true) {
 
-      const { edgeHierarchical, edgeDirection, shakeTowards, edgePhysics, edgeArrowType } = configEdgesGral
+      const { edgeHierarchical, edgeDirection, shakeTowards, edgePhysics, edgeArrowType, gralNodeEdgeRef } = configEdgesGral
       // console.log(' edgePhysics  ', edgePhysics   layout:{hierarchical: true}    )
       let confGralEdges = {}// { smooth: { enabled: false } }
-      // shakeTowards: 'roots'  // roots, leaves
-      // const smoothEnabled  = false
+      let gralNodeEdge = gralNodeEdgeRef.current
+      gralNodeEdge.edge.smooth = { enabled: true, type: edgeArrowType }
 
       networkRef.current.setOptions({
         physics: { enabled: edgePhysics },
         // layout: { hierarchical: { enabled: edgeHierarchical, shakeTowards: shakeTowards } },
         // https://visjs.github.io/vis-network/examples/network/layout/hierarchicalLayoutUserdefined.html
         layout: { hierarchical: { enabled: edgeHierarchical, shakeTowards: shakeTowards, direction: edgeDirection } },  //  // UD, DU, LR, RL
-        edges: {
-          smooth: { enabled: true, type: edgeArrowType },
-          // arrows: { to: { enabled: true,type:'box', scaleFactor: scaleFactor } }  
-        }, //confGralEdges
-
+        // UD, DU, LR, RL
+        edges: gralNodeEdge.edge, //confGralEdges
+        nodes: gralNodeEdge.node,
       })
 
 
